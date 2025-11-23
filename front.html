@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Own World</title>
+  <style>
+
+    :root{
+      --pink: #ffb8d4;    
+      --pink-deep: #e37aa8;
+      --green: #cfeed7;     
+      --green-deep: #4ca35a;
+      --muted:#6b6b6b;
+      --pink-very-light: #fff0f6;
+      --green-very-light: #f0fff4;
+    }
+
+    /* floating chiikawa-like emoji background */
+    .chiikawa-bg { position: fixed; inset: 0; pointer-events:none; z-index:0; overflow:hidden; }
+    .chiikawa-bg span{
+      position:absolute;
+      width:80px; height:80px; border-radius:22px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:30px;
+      opacity:0.18;
+      transform: translateY(120vh) rotate(0deg) scale(1);
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.06));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(120vh) rotate(0deg) scale(.9); opacity:0; }
+      10% { opacity:0.28; }
+      100% { transform: translateY(-20vh) rotate(360deg) scale(1.05); opacity:0; }
+    }
+    .top-nav {
+      position: fixed;
+      top: 14px;
+      right: 5%;
+      transform: none;
+      z-index: 999;
+      display: flex;
+      gap: 8px;
+      align-items: left;
+      padding: 6px 10px;           
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(121,215,137,0.08), rgba(255,127,191,0.06));
+      border: 1px solid rgba(230,99,135,0.05);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      backdrop-filter: blur(4px);
+      font-family: Arial, sans-serif;
+      font-size: 14px;                
+    }
+    .top-nav .links { 
+      display:flex; 
+      gap:6px; 
+      padding-left:6px; 
+      align-items:center; 
+    }
+    .top-nav .links a {
+      text-decoration:none;
+      background: linear-gradient(90deg,var(--pink),var(--green));
+      color:#0a0a0a;
+      padding:6px 10px;               
+      border-radius:8px;
+      font-weight:700;
+      transition: transform .12s ease, box-shadow .12s ease;
+      display:inline-block;
+    }
+    .top-nav .links a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(230,99,135,0.12);
+    }
+
+    body {
+      background: linear-gradient(180deg, var(--pink-very-light) 0%, var(--pink) 35%, var(--green) 100%);
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      position: relative;
+      z-index:1;
+      transition: background 0.6s ease;
+    }
+
+    header img {
+      width: 100%;
+      max-height: 600px;
+      object-fit: cover;
+      display:block;
+      border-radius: 8px;
+    }
+
+    /* small top spacing so nav doesn't visually overlap hero */
+    header { margin-top: 36px; }
+
+    h1 {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 650px;
+      font-family: 'Inknut Antiqua', serif;
+      font-size: 60px;
+      line-height: 1.1;
+      color: #000;
+      margin: 0;
+      z-index:2;
+    }
+
+    p.lead {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 750px;
+      margin: 0;
+      font-size: 26px;
+      z-index:2;
+    }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px;
+      max-width: 900px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+      margin-top: 250px;
+      z-index:2;
+    }
+
+  .gallery-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s;
+    top: 850px;
+    text-decoration: none;
+  }
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+  }
+
+  /* KEEP EXACT PHOTO SIZES */
+  .gallery-item img {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    width: 350px; height: 300px;
+    object-fit: cover;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display:block;
+  }
+
+  .gallery-item img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+
+    .envelope {
+      width: 500px;
+      perspective: 1000px;
+      margin: 100px auto;
+      z-index:2;
+    }
+    .flap {
+      width: 100%;
+      height: 80px;
+      background: #f2d1d9;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transform-origin: top;
+      transform: rotateX(0deg);
+      transition: transform 1s ease-in-out;
+      border: 1px solid #d2a0b0;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .letter {
+      background: #a3d7ab;
+      border: 1px solid #dcc2d8;
+      border-radius: 0 0 8px 8px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      font-family: 'Georgia', serif;
+      font-size: 20px;
+      line-height: 1.8; color: #5a3b2e;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 1s ease-in-out;
+      text-align: center;
+      z-index:2;
+    }
+
+  .open .flap {
+      transform: rotateX(-180deg);
+    }
+
+  .open .letter {
+    max-height: 500px;
+    }
+
+  .open-btn {
+    margin-top: -100px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background: #f49aeb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index:2;
+    }
+
+  .open-btn:hover {
+    background: #c7fcc1;
+    }
+
+    /* 🌸 Styled Message Before the Cards */
+    .flower-text {
+      font-family: 'Georgia', serif;
+      font-size: 28px;
+      color: #822659;
+      text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.7);
+      margin: 50px auto 20px;
+      animation: fadeIn 2s ease-in-out;
+      z-index:2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cards-container {
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:30px;
+      margin-top:50px;
+      padding-bottom:50px;
+      z-index:2;
+    }
+
+    .card {
+      width: 220px;
+      height: 300px;
+      perspective: 1200px;
+      position: relative;
+      cursor: pointer;
+      z-index:2;
+    }
+
+    .inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+    }
+
+    .card.flipped .inner { transform: rotateY(180deg); }
+
+    .front, .back {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .front { background: #fff; }
+
+    .front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: translateZ(0);
+    }
+
+    .back {
+      background: #fff;
+      transform: rotateY(180deg);
+      padding: 15px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #222;
+      box-sizing: border-box;
+    }
+
+
+    @media (max-width:560px) {
+      h1 { position: static; transform:none; margin-top:20px; font-size:36px; }
+      p.lead { position: static; transform:none; margin-top:10px; }
+      .gallery-item img { width: 90vw; height: 60vw; }
+      .card { width: 45vw; height: 60vw; }
+    }
+
+    /* small adjustment so anchor scrolling places card below nav */
+    :target { scroll-margin-top: 90px; }
+
+    /* About placeholder styling */
+    .about {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 20px;
+      text-align: center;
+      color: #333;
+      font-family: Arial, sans-serif;
+      z-index:2;
+    }
+    .about a { color: var(--pink-deep); font-weight:700; text-decoration:underline; }
+
+#flower {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 50px;
+  padding-bottom: 50px;
+}
+
+#flower .card {
+  width: 220px;
+  height: 300px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+#flower .card .front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bites-text {
+  font-family: 'Georgia', serif;
+  font-size: 28px;
+  color: #822659;
+  text-shadow: 1px 1px 4px rgba(255,255,255,0.7);
+  margin-top: 200px;
+  animation: fadeIn 2s ease-in-out;
+  z-index: index 2;
+  text-align: center;
+}
+
+[id="date bites"] {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  row-gap: 2px;
+  margin-top: 10px;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+}
+
+[id="date bites"] .card {
+  width: 220px;
+  height: 300px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+[id="date bites"] .front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+/* ===== Flipbook styles for 'Our Little Adventure' (generalized) ===== */
+.flipbook-container { display:flex; justify-content:center; width:100%; margin-top:10px; margin-bottom:40px; z-index:2; }
+.flipbook {
+  width: 220px;              /* same visual width as your .card */
+  height: 300px;             /* same visual height as your .card */
+  position: relative;
+  perspective: 1600px;
+  -webkit-perspective: 1600px;
+  user-select: none;
+  outline: none;
+}
+
+.flipbook .page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center; /* page flips from left like a real book */
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1), box-shadow 250ms;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  display:flex;
+  align-items:stretch;
+  justify-content:stretch;
+  background: #fff;
+}
+
+.flipbook .page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* default stacking */
+.flipbook .page[data-index="0"] { z-index: 40; }
+.flipbook .page[data-index="1"] { z-index: 30; left: 0; }
+.flipbook .page[data-index="2"] { z-index: 20; left: 0; }
+.flipbook .page[data-index="3"] { z-index: 10; left: 0; }
+
+/* flipped state rotates page away leaving the next page visible */
+.flipbook .page.flipped {
+  transform: rotateY(-180deg);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.28);
+}
+
+/* small visual cue (default inside flipbook) */
+.flip-hint {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  color: var(--muted);
+  opacity: .9;
+}
+
+/* when the hint is moved into the wrapper, show it as a normal block below the book */
+.flipbook-wrapper .flip-hint,
+.flipbook-container > .flipbook .flip-hint {
+  position: static;      /* become normal flow element */
+  transform: none;
+  margin-top: 10px;      /* spacing under the book */
+  bottom: auto;
+  left: auto;
+  text-align: center;
+  width: 100%;
+  font-size: 13px;
+  color: var(--muted);
+  opacity: 0.95;
+}
+
+/* responsive: scale the flipbook on small screens (matches your responsive card sizes) */
+@media (max-width:560px) {
+  .flipbook { width: 45vw; height: 60vw; }
+  .flip-hint { bottom: -26px; font-size: 11px; }
+}
+
+/* ===== Flipbook positioning helpers (auto-wrapper compatible) ===== */
+
+/* A reliable wrapper that creates consistent columns for each flipbook */
+.flipbook-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;              /* keeps same visual width as .card */
+  margin: 0 12px 28px;      /* horizontal gap and bottom spacing */
+  box-sizing: border-box;
+  min-width: 160px;         /* prevents collapse on very small screens */
+}
+
+/* Ensure the container that holds flipbooks is centered and wraps */
+.flipbook-container {
+  display: flex !important;       /* enforce flex layout */
+  flex-wrap: wrap;
+  justify-content: center;        /* always center row content */
+  align-items: flex-start;
+  gap: 18px 24px;                 /* vertical and horizontal spacing */
+  padding: 18px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Give each flipbook a consistent offset (keeps visual baseline) */
+.flipbook {
+  margin: 0;
+  transform-origin: left center;
+}
+
+/* Responsive adjustments: scale wrapper & flipbook consistently */
+@media (max-width: 560px) {
+  .flipbook-wrapper { width: 45vw; margin: 0 6px 18px; }
+  .flipbook { width: 100%; height: 60vw; }
+}
+
+/* end flipbook styles */
+
+  </style>
+</head>
+<body>
+
+  <!-- animated background -->
+  <div class="chiikawa-bg" id="chiikawaBg"></div>
+
+  <!-- NAVBAR (compact) -->
+  <div class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="links">
+
+      <!-- reordered & relabeled as requested -->
+      <a href="#envelope">Letter</a>
+      <a href="#gallery">Memories</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+
+  <header>
+    <img src="ff.jpg" alt="Couple photo" id="heroImg">
+  </header>
+
+  <h1>Our Own World</h1>
+  <p class="lead">This is our space for the memories we shaped us.</p>
+
+  <div class="gallery" id="gallery">
+    <a href="#flower" class="gallery-item">
+      <img src="chiikawa 1.gif" alt="The Flower He Gave">
+      <span>The Flower you Gave</span>
+    </a>
+    <a href="#date bites" class="gallery-item">
+      <img src="chikawa pic.gif" alt="Date Bites">
+      <span>Date Bites</span>
+    </a>
+    <a href="#laugh" class="gallery-item">
+      <img src="scarsevenvid.gif" alt="Our Little Adventurey">
+      <span>Our Little Adventure</span>
+    </a>
+    <a href="#music" class="gallery-item">
+      <img src="chiikawa-chiikawa music.gif" alt="Music We Fell For">
+      <span>Music We Fell For</span>
+    </a>
+  </div>
+
+  <div class="envelope" id="envelope">
+    <div class="flap"></div>
+    <div class="letter">
+      <h4>
+        Hi! My Love ❤️<br>
+        This little space is just for us — a place where every picture tells our story.<br>
+        Each memory here is a reminder of how far we’ve come,<br>
+        how much we’ve laughed.
+      </h4>
+    </div>
+  </div>
+
+  <!-- envelope toggle button -->
+  <button class="open-btn" id="envelopeBtn" onclick="toggleEnvelope()">Open❤️</button>
+
+  <p class="flower-text">Every flower you gave has a story written in love. 🌸</p>
+
+    <!-- flower cards -->
+  <div class="cards-container" id="flower">
+
+    <div class="card" id="adventure" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="f1.jpg" alt="Photo 1"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My 19th birthday, you gave a flower, necklace and a letter — the day you officially courted me.</p></div>
+      </div>
+    </div>
+
+    <div class="card" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="f2.jpg" alt="Photo 2"></div>
+        <div class="back"><p>FEBRUARY 14, 2025🌸<br> Our first Valentine’s — the second flower you gave, along with headphones. You said you almost didn’t give it because you felt shy carrying it, but that flower reminded me how lucky I am to have you.</p></div>
+      </div>
+    </div>
+
+    <div class="card" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="f3.jpg" alt="Photo 3"></div>
+        <div class="back"><p>MARCH 08, 2025 🌙<br> Our 11th day of being official — the third flower you gave me on Women’s Day, to congratulate me for all the awards I received. You even tried to hide it, but I saw it in your bag. 
+          That night, you made my world brighter than the stars.</p></div>
+      </div>
+    </div>
+
+    <div class="card" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="f4.jpg" alt="Photo 4"></div>
+        <div class="back"><p>JUNE 25, 2025 🌹<br> The fourth flower — our 4th monthsary. You gave it to me while we were ordering at KFC in SM Manila. No wonder you took so long at LRT2 — you were looking for the perfect one. 💖</p></div>
+      </div>
+    </div>
+
+    <div class="card" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="f5.jpg" alt="Photo 5"></div>
+        <div class="back"><p>OCTOBER 29, 2025 🌹<br> The fifth flower -My 20th birthday, and officially our 5th day since our love became legal on both sides — the journey wasn’t easy, but the happiness was worth every struggle, even if my side still needs time to fully accept us. 💖</p></div>
+      </div>
+    </div>
+
+  </div>
+
+     <!-- date bites -->     
+  <p class="date bites-text">Every bite with you feels like a tiny love story. 🍦</p>
+  <div class="cards-container" id="date bites">
+
+  <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db1.jpg" alt="Photo 1"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+  <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db2.jpg" alt="Photo 2"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+    <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db3.jpg" alt="Photo 3"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+      <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db4.jpg" alt="Photo 4"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+      <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db5.jpg" alt="Photo 5"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+      <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db6.jpg" alt="Photo 6"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+      <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db7.jpg" alt="Photo 7"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+
+      <div class="card" id="date bites" tabindex="0">
+      <div class="inner">
+        <div class="front"><img src="db8.jpg" alt="Photo 8"></div>
+        <div class="back"><p>OCTOBER 29,2025 💌<br> My</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== REPLACED: our little adventure -> generalized flipbook implementation (full block) ====== -->
+  <p class="date bites-text">Little adventures with you will always be my favorite. ⭐</p>
+
+  <div class="cards-container flipbook-container" id="little-adventure-section">
+    <!-- Flipbook 1 (our little adventure) -->
+    <div class="flipbook" tabindex="0" role="group" aria-roledescription="flipbook" aria-label="Little adventure photo book">
+      <div class="page" data-index="0" aria-label="Page 1"><img src="a1.jpg" alt="Little adventure 1"></div>
+      <div class="page" data-index="1" aria-label="Page 2"><img src="aaaa1.jpg" alt="Little adventure 2"></div>
+      <div class="page" data-index="2" aria-label="Page 3"><img src="aa1.jpg" alt="Little adventure 3"></div>
+      <div class="page" data-index="3" aria-label="Page 4"><img src="aaaaa1.jpg" alt="Little adventure 4"></div>
+      <div class="page" data-index="4" aria-label="Page 5"><img src="aaa1.jpg" alt="Little adventure 5"></div>
+      <div class="flip-hint" aria-hidden="true">Click to flip • October 02, 2025</div>
+    </div>
+
+    <!-- Example Flipbook 2 -->
+    <div class="flipbook" tabindex="0" role="group" aria-roledescription="flipbook" aria-label="Another little book (example)">
+      <div class="page" data-index="0" aria-label="Page 1"><img src="a2.jpg" alt="Example book photo 1"></div>
+      <div class="page" data-index="1" aria-label="Page 2"><img src="aa2.jpg" alt="Example book photo 2"></div>
+      <div class="page" data-index="2" aria-label="Page 3"><img src="aaa2.jpg" alt="Example book photo 3"></div>
+      <div class="page" data-index="3" aria-label="Page 4"><img src="aaaa2.jpg" alt="Example book photo 4"></div>
+      <div class="page" data-index="4" aria-label="Page 5"><img src="aaaaa2.jpg" alt="Example book photo 5"></div>
+      <div class="flip-hint" aria-hidden="true">Click to flip • September 14, 2025</div>
+    </div>
+
+    <!-- Example Flipbook 3 (outside the flipbook-container originally) -->
+    <div class="flipbook" tabindex="0" role="group" aria-roledescription="flipbook" aria-label="Another little book (example)">
+      <div class="page" data-index="0" aria-label="Page 1"><img src="a3.jpg" alt="Example book photo 1"></div>
+      <div class="page" data-index="1" aria-label="Page 2"><img src="aa3.jpg" alt="Example book photo 2"></div>
+      <div class="page" data-index="2" aria-label="Page 3"><img src="aaa3.jpg" alt="Example book photo 3"></div>
+      <div class="page" data-index="3" aria-label="Page 4"><img src="aaaa3.jpg" alt="Example book photo 4"></div>
+      <div class="page" data-index="4" aria-label="Page 5"><img src="aaaaa3.jpg" alt="Example book photo 5"></div>
+      <div class="flip-hint" aria-hidden="true">Click to flip • August 26, 2025</div>
+    </div>
+  </div>
+  <!-- ====== end flipbook block ====== -->
+
+  <!-- About placeholder -->
+  <section id="about" class="about" aria-labelledby="aboutTitle">
+    <h3 id="aboutTitle">About this album</h3>
+  </section>
+
+<script>
+  // chiikawa floating faces generator
+  (function createFloatingFaces(){
+    const emojis = ['🌙','🌹','🌹','🎂','🌸','🌸'];
+    const container = document.getElementById('chiikawaBg');
+    const count = 20;
+    for (let i=0;i<count;i++){
+      const s = document.createElement('span');
+      s.textContent = emojis[i % emojis.length];
+      s.style.left = (Math.random()*100) + '%';
+      s.style.width = (50 + Math.random()*60) + 'px';
+      s.style.height = s.style.width;
+      s.style.top = (Math.random()*100) + 'vh';
+      s.style.opacity = 0.08 + Math.random()*0.28;
+      s.style.animationDuration = (10 + Math.random()*8) + 's';
+      s.style.animationDelay = (Math.random()*5) + 's';
+      container.appendChild(s);
+    }
+  })();
+
+  (function smoothTopNav(){
+    const navLinks = document.querySelectorAll('.top-nav .links a[href^="#"]');
+    function scrollToHash(hash){
+      const el = document.querySelector(hash);
+      if (!el) return;
+      const nav = document.querySelector('.top-nav');
+      const offset = (nav ? nav.offsetHeight : 0) + 12;
+      const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+      el.style.transition = 'box-shadow .28s ease';
+      setTimeout(()=> el.style.boxShadow = '', 900);
+    }
+    navLinks.forEach(a => {
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        const hash = this.getAttribute('href');
+        scrollToHash(hash);
+        history.replaceState(null,'',hash);
+      });
+    });
+    if (location.hash) setTimeout(()=> scrollToHash(location.hash),120);
+  })();
+
+  // keep your flip behavior for individual .card elements (unchanged)
+  document.querySelectorAll('.card').forEach(function(card){
+    card.addEventListener('click', function(){
+      card.classList.toggle('flipped');
+    });
+    card.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+  });
+
+  // image error logging: show console warning (unchanged behavior)
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => console.warn('Image failed to load:', img.src));
+  });
+
+  // toggle envelope and update button text (Open / Close)
+  function toggleEnvelope() {
+    const env = document.getElementById('envelope');
+    const btn = document.getElementById('envelopeBtn');
+    if (!env || !btn) return;
+    const opened = env.classList.toggle('open');
+    btn.textContent = opened ? 'Close❤️' : 'Open❤️';
+  }
+
+  /* ===== Generalized Flipbook initializer =====
+     - Automatically finds all .flipbook elements
+     - Each flipbook is initialized independently
+     - Clicking/Enter/Space flips forward; when last page is reached the next click resets (unflips) with stagger
+     - Clicking specific page toggles that page only if it's the next one (keeps order)
+  */
+  (function initAllFlipbooks(){
+    const flipbooks = Array.from(document.querySelectorAll('.flipbook'));
+    if (!flipbooks.length) return;
+
+    flipbooks.forEach((book) => {
+      const pages = Array.from(book.querySelectorAll('.page'));
+      // ensure pages are ordered by data-index (0 = top)
+      pages.sort((a,b) => Number(a.dataset.index) - Number(b.dataset.index));
+
+      // set stacking z-index based on order (optional: ensures consistent stacking)
+      pages.forEach((pg, i) => {
+        const idx = Number(pg.dataset.index) || 0;
+        const z = Math.max(50 - (idx * 10), 1);
+        pg.style.zIndex = z;
+      });
+
+      // state per book
+      let flippedCount = 0;
+      let isResetting = false;
+      const resetDelayBetween = 110; // ms between each page unflip (tweak to taste)
+
+      function flipNext() {
+        if (isResetting) return;
+        if (flippedCount < pages.length) {
+          const pageToFlip = pages[flippedCount];
+          pageToFlip.classList.add('flipped');
+          flippedCount++;
+        } else {
+          // all flipped -> reset (return to first)
+          resetBook();
+        }
+      }
+
+      function flipBack() {
+        if (isResetting) return;
+        if (flippedCount > 0) {
+          const page = pages[flippedCount - 1];
+          page.classList.remove('flipped');
+          flippedCount--;
+        }
+      }
+
+      function resetBook() {
+        if (isResetting) return;
+        isResetting = true;
+        // unflip pages in reverse order with a small stagger for a nice effect
+        for (let i = pages.length - 1; i >= 0; i--) {
+          ((idx) => {
+            setTimeout(() => {
+              pages[idx].classList.remove('flipped');
+              if (idx === 0) {
+                flippedCount = 0;
+                isResetting = false;
+              }
+            }, (pages.length - 1 - i) * resetDelayBetween);
+          })(i);
+        }
+      }
+
+      // click on book flips next page (or resets when finished)
+      book.addEventListener('click', (e) => {
+        flipNext();
+      });
+
+      // keyboard accessibility: Enter/Space to flip next; Left/Backspace to go back; Right to go forward
+      book.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (k === 'Enter' || k === ' ' || k === 'Spacebar') {
+          e.preventDefault();
+          flipNext();
+        } else if (k === 'Backspace' || k === 'ArrowLeft') {
+          e.preventDefault();
+          flipBack();
+        } else if (k === 'ArrowRight') {
+          e.preventDefault();
+          flipNext();
+        }
+      });
+
+      // clicking a page toggles it only if it's the next in order or the last flipped (keeps order)
+      pages.forEach((pg, idx) => {
+        pg.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          if (isResetting) return;
+          const isFlipped = pg.classList.contains('flipped');
+          if (!isFlipped && idx === flippedCount) {
+            pg.classList.add('flipped');
+            flippedCount++;
+          } else if (isFlipped && idx === flippedCount - 1) {
+            pg.classList.remove('flipped');
+            flippedCount--;
+          }
+          // otherwise ignore (prevents flipping out-of-order)
+        });
+      });
+
+      // focus/blur visual cue
+      book.addEventListener('focus', () => book.style.boxShadow = '0 10px 30px rgba(0,0,0,0.12)');
+      book.addEventListener('blur', () => book.style.boxShadow = '');
+
+      // handle image errors for pages
+      pages.forEach(p => {
+        const img = p.querySelector('img');
+        if (img) img.addEventListener('error', () => console.warn('Flipbook image failed:', img.src));
+      });
+    });
+  })();
+  // ===== end generalized flipbook initializer =====
+
+  /* ===== Flipbook auto-wrapper helper (ensures consistent positioning) ===== */
+  (function ensureFlipbookWrappers() {
+    // Run after DOM content is ready
+    function wrapFlipbooks() {
+      const flipbooks = Array.from(document.querySelectorAll('.flipbook'));
+      flipbooks.forEach((fb) => {
+        // If already inside a wrapper with class 'flipbook-wrapper', do nothing
+        if (fb.parentElement && fb.parentElement.classList.contains('flipbook-wrapper')) return;
+
+        // Create wrapper and insert it where the flipbook was
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flipbook-wrapper';
+
+        // Move flipbook into wrapper
+        fb.parentNode.insertBefore(wrapper, fb);
+        wrapper.appendChild(fb);
+
+        // If the original parent was a cards-container or similar, keep wrapper inside existing container;
+        // otherwise, append wrapper into the nearest .flipbook-container if available
+        if (!wrapper.parentElement.classList.contains('flipbook-container')) {
+          const nearestContainer = document.querySelector('.flipbook-container');
+          if (nearestContainer) nearestContainer.appendChild(wrapper);
+        }
+
+        // If the flipbook itself had a .flip-hint element, ensure it sits visibly under the flipbook.
+        const hint = fb.querySelector('.flip-hint');
+        if (hint) {
+          // move hint out to wrapper (so centering works reliably)
+          wrapper.appendChild(hint);
+        }
+      });
+
+      // Ensure the top-level .flipbook-container(s) have the proper class and layout
+      const containers = document.querySelectorAll('.cards-container.flipbook-container, .flipbook-container');
+      containers.forEach(c => c.classList.add('flipbook-container'));
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wrapFlipbooks);
+    } else {
+      wrapFlipbooks();
+    }
+
+    // Re-run on DOM changes (in case you dynamically add flipbooks)
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1 && (node.matches('.flipbook') || node.querySelector && node.querySelector('.flipbook'))) {
+            wrapFlipbooks();
+            return;
+          }
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+  /* ===== end auto-wrapper helper ===== */
+
+</script>
+</body>
+</html>
